@@ -1,34 +1,13 @@
-//objeto - (propriedade: valor) - mapeamento da rota e pág.
-const routes = {
-  "/": "/pages/home.html",
-  "/about": "/pages/about.html",
-  "/contact": "/pages/contact.html",
-  404: "/pages/404.html",
-};
-//onclick executa o route
-function route(event) {
-  //para não fazer o evento padrão - recarregar a página
-  event = event || window.event;
-  event.preventDefault();
-  //coloque o estado no histórico que está mudando a pág.(href)
-  window.history.pushState({}, "", event.target.href);
+import { Router } from "./router.js"
 
-  handle();
-}
-//pegando pathname e transformando em uma constante - para manipular
-function handle() {
-  const { pathname } = window.location;
-  //pegando a rota, se não tiver mostra a rota 404
-  const route = routes[pathname] || routes[404];
-  //fetch - vai gerar uma promessa, tira da leitura linha a linha
-  fetch(route)
-    .then((data) => data.text()) //retorna os dados em texto
-    .then((html) => {
-      document.querySelector("#app").innerHTML = html;
-    }); //vai adicionar no app o html
-}
+const router = new Router()
 
-handle();
+router.add("/", "/pages/home.html")
+router.add("/about", "/pages/about.html")
+router.add("/contact", "/pages/contact.html")
+router.add(404, "/pages/404.html")
 
-window.onpopstate = () => handle();
-window.route = () => route();
+router.handle();
+
+window.onpopstate = () => router.handle();
+window.route = () => router.route(); //para não continuar fazendo o padrão
